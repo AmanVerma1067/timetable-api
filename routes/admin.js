@@ -1,55 +1,55 @@
 const express = require('express');
 const router = express.Router();
+const Timetable = require('../models/timetable');
 const jwt = require('jsonwebtoken');
-const Timetable = require('../models/Timetable');
+require('dotenv').config();
 
-// POST /admin/login
+// Dummy login endpoint for local testing
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (
     username === process.env.ADMIN_USERNAME &&
     password === process.env.ADMIN_PASSWORD
   ) {
-    const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
+    const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+      expiresIn: '1h'
     });
     return res.json({ token });
   }
-  return res.status(401).json({ message: 'Invalid credentials' });
+  res.status(401).json({ error: 'Invalid credentials' });
 });
 
-// Middleware
-const authMiddleware = (req, res, next) => {
-  const token = req.body.token;
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+// POST /admin/update - update or insert timetable
+router.post('/update', async (req, res) => {
+  const { token, data } = req.body;
+
   try {
     jwt.verify(token, process.env.JWT_SECRET);
-    next();
-  } catch {
-    return res.status(403).json({ message: 'Invalid token' });
+  } catch (err) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
-};
 
-// GET /admin/raw-timetable
-router.get('/raw-timetable', authMiddleware, async (req, res) => {
-  const data = await Timetable.find();
-  res.json(data);
-});
-
-// POST /admin/update
-router.post('/update', authMiddleware, async (req, res) => {
-  const updates = req.body.data;
   try {
-    for (const entry of updates) {
+    for (const entry of data) {
       await Timetable.findOneAndUpdate(
         { batch: entry.batch },
         entry,
         { upsert: true, new: true }
       );
     }
-    res.json({ message: 'Updated successfully' });
+    res.json({ message: 'Timetable updated successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Update failed', error: err.message });
+    res.status(500).json({ error: 'Error updating timetable' });
+  }
+});
+
+// GET raw data (for admin view in frontend)
+router.get('/raw-timetable', async (req, res) => {
+  try {
+    const all = await Timetable.find();
+    res.json(all);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching data' });
   }
 });
 

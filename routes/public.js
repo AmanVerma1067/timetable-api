@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Timetable = require('../models/Timetable');
+const Timetable = require('../models/timetable');
 
+// GET /api/timetable - public route
 router.get('/timetable', async (req, res) => {
-  if (req.headers['x-api-key'] !== process.env.API_KEY) {
-    return res.status(401).json({ message: 'Unauthorized' });
+  try {
+    const data = await Timetable.find(); // Fetch all batches
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error while fetching timetable' });
   }
-  const data = await Timetable.find();
-  res.json(data);
 });
 
 module.exports = router;
