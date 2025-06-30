@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timetable Admin Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #4b0082;
+    }
+    button {
+      background-color: #4b0082;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 10px;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 Timetable Admin Panel</h1>
+
+  <div class="card">
+    <h3>🔍 Fetch Timetable Data</h3>
+    <label>API Key:</label>
+    <input type="text" id="apiKey" placeholder="Enter your API key"/>
+    <button onclick="fetchTimetable()">Fetch</button>
+    <pre id="timetableOutput">Click fetch to see timetable data...</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔐 Admin Login</h3>
+    <label>Username:</label>
+    <input type="text" id="adminUser" value="admin" />
+    <label>Password:</label>
+    <input type="password" id="adminPass" />
+    <button onclick="adminLogin()">Login</button>
+    <p><strong>Admin Token:</strong> <span id="adminTokenDisplay">(None)</span></p>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Update Timetable</h3>
+    <label>Paste updated JSON here:</label>
+    <textarea id="updateJson" rows="10"></textarea>
+    <button onclick="updateTimetable()">Update</button>
+    <pre id="updateOutput"></pre>
+  </div>
+
+  <script>
+    let adminToken = '';
+
+    async function fetchTimetable() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      try {
+        const res = await fetch('/api/timetable', {
+          headers: { 'x-api-key': apiKey }
+        });
+        const data = await res.json();
+        document.getElementById('timetableOutput').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('timetableOutput').textContent = '❌ Error: ' + err;
+      }
+    }
+
+    async function adminLogin() {
+      const username = document.getElementById('adminUser').value.trim();
+      const password = document.getElementById('adminPass').value.trim();
+      try {
+        const res = await fetch('/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.token) {
+          adminToken = data.token;
+          document.getElementById('adminTokenDisplay').textContent = data.token;
+        } else {
+          document.getElementById('adminTokenDisplay').textContent = 'Login failed';
+        }
+      } catch (err) {
+        document.getElementById('adminTokenDisplay').textContent = '❌ Error: ' + err;
+      }
+    }
+
+    async function updateTimetable() {
+      const jsonRaw = document.getElementById('updateJson').value.trim();
+      try {
+        const parsed = JSON.parse(jsonRaw);
+        const res = await fetch('/admin/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ token: adminToken, data: parsed })
+        });
+        const out = await res.json();
+        document.getElementById('updateOutput').textContent = JSON.stringify(out, null, 2);
+      } catch (err) {
+        document.getElementById('updateOutput').textContent = '❌ Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

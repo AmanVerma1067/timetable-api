@@ -10,4 +10,4 @@ const timetableSchema = new mongoose.Schema({
   Saturday: { type: [String], default: [] }
 });
 
-module.exports = mongoose.model('Timetable', timetableSchema);
+module.exports = mongoose.model('Timetable', timetableSchema, 'timetables');
