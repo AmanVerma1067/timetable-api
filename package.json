@@ -1,0 +1,30 @@
+{
+  "name": "timetable-api",
+  "version": "1.0.0",
+  "description": "A full-stack REST API + Admin Panel solution for managing academic timetables using **MongoDB**, **Express**, and a clean frontend for visualizing and editing schedules.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmanVerma1067/timetable-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AmanVerma1067/timetable-api/issues"
+  },
+  "homepage": "https://github.com/AmanVerma1067/timetable-api#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1"
+  }
+}
