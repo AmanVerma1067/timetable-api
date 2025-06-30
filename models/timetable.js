@@ -1,13 +1,20 @@
 const mongoose = require('mongoose');
 
+const sessionSchema = new mongoose.Schema({
+  time:    { type: String, required: true },
+  subject: { type: String, required: true },
+  room:    { type: String, required: true },
+  teacher: { type: String, required: true }
+}, { _id: false });
+
 const timetableSchema = new mongoose.Schema({
-  batch: { type: String, required: true, unique: true },
-  Monday: { type: [String], default: [] },
-  Tuesday: { type: [String], default: [] },
-  Wednesday: { type: [String], default: [] },
-  Thursday: { type: [String], default: [] },
-  Friday: { type: [String], default: [] },
-  Saturday: { type: [String], default: [] }
+  batch:     { type: String, required: true, unique: true },
+  Monday:    { type: [sessionSchema], default: [] },
+  Tuesday:   { type: [sessionSchema], default: [] },
+  Wednesday: { type: [sessionSchema], default: [] },
+  Thursday:  { type: [sessionSchema], default: [] },
+  Friday:    { type: [sessionSchema], default: [] },
+  Saturday:  { type: [sessionSchema], default: [] }
 });
 
-module.exports = mongoose.model('Timetable', timetableSchema, 'timetables');
+module.exports = mongoose.model('Timetable', timetableSchema);
