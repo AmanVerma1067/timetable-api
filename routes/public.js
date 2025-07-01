@@ -1,18 +1,19 @@
-const express   = require('express');
-const router    = express.Router();
+const express = require('express');
+const router = express.Router();
 const Timetable = require('../models/timetable');
 
 // GET /api/timetable
-// Returns exactly the JSON array of batches/sessions.
 router.get('/timetable', async (req, res) => {
   try {
-    const data = await Timetable
-      .find({})
-      .select('-_id -__v')     // remove Mongo internals
-      .lean();                  // return plain JS objects
-    res.json(data);
+    // Get the single document from timetables collection
+    const doc = await Timetable.findOne()
+      .select('timetableData -_id')
+      .lean();
+    
+    // Return the timetableData array or empty array if no data
+    res.json(doc ? doc.timetableData : []);
   } catch (err) {
-    console.error('Public GET /timetable error:', err);
+    console.error('Timetable fetch error:', err);
     res.status(500).json({ error: 'Server error while fetching timetable' });
   }
 });

@@ -1,136 +1,662 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Timetable Admin Panel</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timetable Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f9;
+    :root {
+      --primary: #6c63ff;
+      --primary-light: #837dff;
+      --secondary: #4caf50;
+      --danger: #ff5252;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --dark-card: #1e1e1e;
+      --medium: #2d2d2d;
+      --light: #e0e0e0;
+      --light-gray: #b0b0b0;
+      --border: #3d3d3d;
+      --success: #66bb6a;
+      --warning: #ffca28;
+    }
+    
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+      color: var(--light);
+      min-height: 100vh;
       padding: 20px;
-      color: #333;
+      line-height: 1.6;
     }
-    h1 {
-      color: #4b0082;
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    button {
-      background-color: #4b0082;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      margin-top: 10px;
-      cursor: pointer;
-      border-radius: 4px;
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border);
     }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-family: inherit;
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
+    
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+    
+    .logo h1 {
+      font-size: 1.8rem;
+      color: var(--light);
+      font-weight: 600;
+    }
+    
+    .logo span {
+      color: var(--primary);
+    }
+    
     .card {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      background: var(--dark-card);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .card-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    
+    .card-title i {
+      color: var(--primary);
+    }
+    
+    .form-group {
       margin-bottom: 20px;
     }
-    pre {
-      background: #f0f0f0;
-      padding: 10px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--light-gray);
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      background: var(--medium);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      color: var(--light);
+      transition: all 0.3s;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+    }
+    
+    textarea {
+      min-height: 200px;
+      font-family: monospace;
+      resize: vertical;
+    }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    button:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+    }
+    
+    .btn-success {
+      background: var(--success);
+    }
+    
+    .btn-success:hover {
+      background: #57a358;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+    }
+    
+    .btn-danger:hover {
+      background: #e04848;
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background: var(--medium);
+      font-family: monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 300px;
+      overflow-y: auto;
+      color: var(--light);
+      border-left: 4px solid var(--primary);
+    }
+    
+    .success {
+      background: rgba(102, 187, 106, 0.15);
+      border-left: 4px solid var(--success);
+      color: #c8e6c9;
+    }
+    
+    .error {
+      background: rgba(255, 82, 82, 0.15);
+      border-left: 4px solid var(--danger);
+      color: #ffcdd2;
+    }
+    
+    .flex-row {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .flex-row > div {
+      flex: 1;
+    }
+    
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    
+    .status-bar i {
+      font-size: 1.2rem;
+    }
+    
+    .status-logged-in {
+      background: rgba(76, 175, 80, 0.15);
+      color: #c8e6c9;
+      border-left: 4px solid var(--success);
+    }
+    
+    .status-logged-out {
+      background: rgba(255, 82, 82, 0.15);
+      color: #ffcdd2;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .instructions {
+      background: rgba(108, 99, 255, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 25px;
+      font-size: 14px;
+      color: var(--light-gray);
+    }
+    
+    .instructions ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    
+    .instructions li {
+      margin-bottom: 8px;
+    }
+    
+    .example {
+      background: var(--medium);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 25px 0;
+      font-size: 14px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #f8f8f2;
       overflow-x: auto;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    
+    .example-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .example-title i {
+      color: var(--warning);
+    }
+    
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 17px;
+      cursor: pointer;
+      color: var(--light-gray);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width:100%;
+      height:100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      background: var(--dark-card);
+      width: 90%;
+      height: 90%;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+    }
+    
+    .modal-content textarea {
+      flex: 1;
+      font-family: monospace;
+      font-size: 14px;
+      background: var(--darker);
+      color: var(--light);
+    }
+    
+    .modal-close {
+      background: var(--danger);
+      align-self: flex-end;
+      margin-bottom: 10px;
+      padding: 8px 16px;
+    }
+    
+    .json-key {
+      color: #ff79c6;
+    }
+    
+    .json-string {
+      color: #50fa7b;
+    }
+    
+    .json-number {
+      color: #bd93f9;
+    }
+    
+    .json-boolean {
+      color: #ffb86c;
+    }
+    
+    .json-null {
+      color: #ff5555;
+    }
+    
+    .highlight {
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
+      padding: 2px 4px;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+      .flex-row {
+        flex-direction: column;
+      }
+      
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .actions button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📘 Timetable Admin Panel</h1>
-
-  <div class="card">
-    <h3>🔍 Fetch Timetable Data</h3>
-    <label>API Key:</label>
-    <input type="text" id="apiKey" placeholder="Enter your API key"/>
-    <button onclick="fetchTimetable()">Fetch</button>
-    <pre id="timetableOutput">Click fetch to see timetable data...</pre>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-calendar-alt"></i>
+        <h1>College <span>Timetable</span> Admin</h1>
+      </div>
+      <div class="api-status">
+        <div class="status-bar" id="apiStatus">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>Checking API connection...</span>
+        </div>
+      </div>
+    </header>
+    
+    <div class="instructions">
+      <p><strong>Instructions:</strong> Use this dashboard to update college batch timetables.</p>
+      <ul>
+        <li>First, log in with your admin credentials</li>
+        <li>Copy/paste the JSON timetable data in the Update section</li>
+        <li>Click "Update Timetable" to save changes</li>
+        <li>Use the "Load Current Timetable" button to see existing data</li>
+      </ul>
+    </div>
+    
+    <div class="flex-row">
+      <div>
+        <div class="card">
+          <h2 class="card-title"><i class="fas fa-user-lock"></i> Admin Login</h2>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter admin username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div style="position: relative;">
+              <input type="password" id="password" placeholder="Enter admin password">
+              <i class="fas fa-eye toggle-eye" id="togglePw"></i>
+            </div>
+          </div>
+          <button onclick="adminLogin()">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+          <div id="loginResult" class="result">Login result will appear here...</div>
+        </div>
+        
+        <div class="card">
+          <h2 class="card-title"><i class="fas fa-database"></i> Load Current Timetable</h2>
+          <p>Load existing timetable data to use as a template for updates.</p>
+          <button onclick="getTimetable()">
+            <i class="fas fa-sync-alt"></i> Load Current Timetable
+          </button>
+          <div id="getResult" class="result">Timetable data will appear here...</div>
+        </div>
+      </div>
+      
+      <div>
+        <div class="card">
+          <h2 class="card-title"><i class="fas fa-edit"></i> Update Timetable</h2>
+          <div class="form-group">
+            <label for="timetableJSON">Timetable JSON Data</label>
+            <textarea id="timetableJSON" placeholder='Paste timetable JSON here'></textarea>
+          </div>
+          
+<div class="example">
+  <div class="example-title"><i class="fas fa-code"></i> Example JSON:</div>
+[{
+  <span class="json-key">"batch"</span>: <span class="json-string">"E16"</span>,
+  <span class="json-key">"Monday"</span>: [{
+    <span class="json-key">"time"</span>: <span class="json-string">"9:00 AM"</span>,
+    <span class="json-key">"subject"</span>: <span class="json-string">"Math"</span>,
+    <span class="json-key">"room"</span>: <span class="json-string">"B-201"</span>,
+    <span class="json-key">"teacher"</span>: <span class="json-string">"Dr. Smith"</span>
+  },{
+    <span class="json-key">"time"</span>: <span class="json-string">"11:00 AM"</span>,
+    <span class="json-key">"subject"</span>: <span class="json-string">"Physics"</span>,
+    <span class="json-key">"room"</span>: <span class="json-string">"Lab-3"</span>,
+    <span class="json-key">"teacher"</span>: <span class="json-string">"Prof. Johnson"</span>
+  }],
+  <span class="json-key">"Tuesday"</span>: [{
+    <span class="json-key">"time"</span>: <span class="json-string">"10:00 AM"</span>,
+    <span class="json-key">"subject"</span>: <span class="json-string">"Programming"</span>,
+    <span class="json-key">"room"</span>: <span class="json-string">"C-101"</span>,
+    <span class="json-key">"teacher"</span>: <span class="json-string">"Dr. Lee"</span>
+  }],
+  <span class="highlight">/* Add more days */</span>
+},{
+  <span class="json-key">"batch"</span>: <span class="json-string">"E15"</span>,
+  <span class="highlight">/* Add another batch */</span>
+}]
+</div>
+          </div>
+          
+          <div class="actions">
+            <button onclick="updateTimetable()" class="btn-success">
+              <i class="fas fa-save"></i> Update Timetable
+            </button>
+            <button onclick="resetForm()" class="btn-danger">
+              <i class="fas fa-trash-alt"></i> Reset Form
+            </button>
+            <button id="expandJSON" class="btn-success">
+              <i class="fas fa-expand"></i> Fullscreen Editor
+            </button>
+          </div>
+          <div id="updateResult" class="result">Update result will appear here...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>🔐 Admin Login</h3>
-    <label>Username:</label>
-    <input type="text" id="adminUser" value="admin" />
-    <label>Password:</label>
-    <input type="password" id="adminPass" />
-    <button onclick="adminLogin()">Login</button>
-    <p><strong>Admin Token:</strong> <span id="adminTokenDisplay">(None)</span></p>
-  </div>
-
-  <div class="card">
-    <h3>✏️ Update Timetable</h3>
-    <label>Paste updated JSON here:</label>
-    <textarea id="updateJson" rows="10"></textarea>
-    <button onclick="updateTimetable()">Update</button>
-    <pre id="updateOutput"></pre>
+  <!-- Fullscreen JSON Modal -->
+  <div class="modal" id="jsonModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal"><i class="fas fa-times"></i> Close</button>
+      <textarea id="modalJSON" placeholder="Edit your JSON data here..."></textarea>
+    </div>
   </div>
 
   <script>
-    let adminToken = '';
-
-    async function fetchTimetable() {
-      const apiKey = document.getElementById('apiKey').value.trim();
+    const API_URL = "http://localhost:3000";
+    const API_KEY = "tt_api_key";
+    let authToken = "";
+    
+    // Toggle password visibility
+    document.getElementById('togglePw').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      const type = pw.getAttribute('type') === 'password' ? 'text' : 'password';
+      pw.setAttribute('type', type);
+      document.getElementById('togglePw').classList.toggle('fa-eye-slash');
+    });
+    
+    // Check API connection on load
+    async function checkApiStatus() {
+      const statusBar = document.getElementById('apiStatus');
       try {
-        const res = await fetch('/api/timetable', {
-          headers: { 'x-api-key': apiKey }
+        const response = await fetch(`${API_URL}/api/timetable`, {
+          headers: { 'x-api-key': API_KEY }
         });
-        const data = await res.json();
-        document.getElementById('timetableOutput').textContent = JSON.stringify(data, null, 2);
-      } catch (err) {
-        document.getElementById('timetableOutput').textContent = '❌ Error: ' + err;
+        if (response.ok) {
+          statusBar.innerHTML = '<i class="fas fa-check-circle"></i> <span>API is online and ready</span>';
+          statusBar.className = 'status-bar status-logged-in';
+        } else {
+          throw new Error('API not responding properly');
+        }
+      } catch (error) {
+        statusBar.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>API connection error: ${error.message}</span>`;
+        statusBar.className = 'status-bar status-logged-out';
       }
     }
-
+    
+    // Admin login function
     async function adminLogin() {
-      const username = document.getElementById('adminUser').value.trim();
-      const password = document.getElementById('adminPass').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const resultElement = document.getElementById('loginResult');
+      
+      if (!username || !password) {
+        resultElement.textContent = "❌ Please enter both username and password";
+        resultElement.className = "result error";
+        return;
+      }
+      
       try {
-        const res = await fetch('/admin/login', {
+        const response = await fetch(`${API_URL}/admin/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
-        if (data.token) {
-          adminToken = data.token;
-          document.getElementById('adminTokenDisplay').textContent = data.token;
+        
+        const data = await response.json();
+        
+        if (response.ok && data.token) {
+          authToken = data.token;
+          resultElement.textContent = "✅ Login successful! You can now update timetables.";
+          resultElement.className = "result success";
         } else {
-          document.getElementById('adminTokenDisplay').textContent = 'Login failed';
+          resultElement.textContent = `❌ ${data.error || 'Invalid credentials'}`;
+          resultElement.className = "result error";
         }
-      } catch (err) {
-        document.getElementById('adminTokenDisplay').textContent = '❌ Error: ' + err;
+      } catch (error) {
+        resultElement.textContent = `❌ Network error: ${error.message}`;
+        resultElement.className = "result error";
       }
     }
-
-    async function updateTimetable() {
-      const jsonRaw = document.getElementById('updateJson').value.trim();
+    
+    // Get timetable function
+    async function getTimetable() {
+      const resultElement = document.getElementById('getResult');
+      const jsonElement = document.getElementById('timetableJSON');
+      
       try {
-        const parsed = JSON.parse(jsonRaw);
-        const res = await fetch('/admin/update', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ token: adminToken, data: parsed })
+        const response = await fetch(`${API_URL}/api/timetable`, {
+          headers: { 'x-api-key': API_KEY }
         });
-        const out = await res.json();
-        document.getElementById('updateOutput').textContent = JSON.stringify(out, null, 2);
-      } catch (err) {
-        document.getElementById('updateOutput').textContent = '❌ Error: ' + err.message;
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultElement.textContent = JSON.stringify(data, null, 2);
+          resultElement.className = "result success";
+          
+          // Also populate the JSON editor with formatted data
+          jsonElement.value = JSON.stringify(data, null, 2);
+        } else {
+          resultElement.textContent = `❌ Error: ${data.error || 'Failed to fetch timetable'}`;
+          resultElement.className = "result error";
+        }
+      } catch (error) {
+        resultElement.textContent = `❌ Network error: ${error.message}`;
+        resultElement.className = "result error";
       }
     }
+    
+    // Update timetable function
+    async function updateTimetable() {
+      const jsonText = document.getElementById('timetableJSON').value.trim();
+      const resultElement = document.getElementById('updateResult');
+      
+      if (!authToken) {
+        resultElement.textContent = "❌ Please login first to get a token.";
+        resultElement.className = "result error";
+        return;
+      }
+      
+      if (!jsonText) {
+        resultElement.textContent = "❌ Please enter timetable JSON data.";
+        resultElement.className = "result error";
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(jsonText);
+        
+        const response = await fetch(`${API_URL}/admin/update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: authToken, data: parsed })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultElement.textContent = "✅ Timetable updated successfully!\n" + JSON.stringify(data, null, 2);
+          resultElement.className = "result success";
+        } else {
+          resultElement.textContent = `❌ Error: ${data.error || 'Failed to update timetable'}`;
+          resultElement.className = "result error";
+        }
+      } catch (error) {
+        resultElement.textContent = `❌ Invalid JSON or request error: ${error.message}`;
+        resultElement.className = "result error";
+      }
+    }
+    
+    // Reset form function
+    function resetForm() {
+      document.getElementById('timetableJSON').value = "";
+      document.getElementById('updateResult').textContent = "Update result will appear here...";
+      document.getElementById('updateResult').className = "result";
+    }
+    
+    // JSON modal handlers
+    document.getElementById('expandJSON').addEventListener('click', () => {
+      document.getElementById('modalJSON').value = document.getElementById('timetableJSON').value;
+      document.getElementById('jsonModal').style.display = 'flex';
+      document.getElementById('modalJSON').focus();
+    });
+    
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('timetableJSON').value = document.getElementById('modalJSON').value;
+      document.getElementById('jsonModal').style.display = 'none';
+    });
+    
+    // Initialize on load
+    window.onload = function() {
+      checkApiStatus();
+      
+      // Focus on username field
+      document.getElementById('username').focus();
+    };
   </script>
 </body>
 </html>

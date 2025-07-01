@@ -1,6 +1,6 @@
-const express   = require('express');
-const router    = express.Router();
-const jwt       = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
 const Timetable = require('../models/timetable');
 require('dotenv').config();
 
@@ -19,7 +19,7 @@ router.post('/login', (req, res) => {
 
 // Auth middleware
 function auth(req, res, next) {
-  const { token } = req.body;
+  const token = req.body.token || req.query.token;
   if (!token) return res.status(401).json({ error: 'No token provided' });
   try {
     jwt.verify(token, process.env.JWT_SECRET);
@@ -32,33 +32,40 @@ function auth(req, res, next) {
 // POST /admin/update
 router.post('/update', auth, async (req, res) => {
   const { data } = req.body;
-  if (!Array.isArray(data)) {
-    return res.status(400).json({ error: '`data` must be an array of timetable objects' });
-  }
-  try {
-    // Upsert each batch document
-    for (const entry of data) {
-      await Timetable.findOneAndUpdate(
-        { batch: entry.batch },
-        entry,
-        { upsert: true, new: true }
-      );
-    }
-    res.json({ message: 'Timetable updated successfully' });
-  } catch (err) {
-    console.error('Admin POST /update error:', err);
-    res.status(500).json({ error: 'Error updating timetable' });
-  }
-});
 
-// GET /admin/raw-timetable
-router.get('/raw-timetable', auth, async (req, res) => {
+  if (!data) {
+    return res.status(400).json({ error: 'No data provided' });
+  }
+
   try {
-    const all = await Timetable.find().select('-__v').lean();
-    res.json(all);
+    // Validate and use the provided data structure
+    if (!Array.isArray(data) || data.length !== 1 || typeof data[0] !== 'object') {
+      return res.status(400).json({ 
+        error: 'Invalid data format. Expected [{"0": {...}, "1": {...}}]' 
+      });
+    }
+    
+    // Count batches
+    const batchCount = Object.keys(data[0]).length;
+    
+    // Update database in timetables collection
+    await Timetable.findOneAndUpdate(
+      {},
+      { timetableData: data },
+      { upsert: true, runValidators: true }
+    );
+
+    res.json({ 
+      message: 'Timetable updated successfully',
+      batchCount
+    });
+
   } catch (err) {
-    console.error('Admin GET /raw-timetable error:', err);
-    res.status(500).json({ error: 'Error fetching data' });
+    console.error('Update error:', err);
+    res.status(500).json({ 
+      error: 'Error updating timetable',
+      details: err.message 
+    });
   }
 });
 
